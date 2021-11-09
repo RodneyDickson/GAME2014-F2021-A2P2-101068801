@@ -11,13 +11,20 @@ public class PlayerBehaviour : MonoBehaviour
     public Transform groundOrigin;
     public float groundRadius;
     public LayerMask groundLayerMask;
+    [Range(0.1f, 0.9f)]
+    public float airControlFactor;
+
+    [Header("Animation")] 
+    public PlayerAnimationState state;
 
     private Rigidbody2D rigidbody;
+    private Animator animatorController;
 
     // Start is called before the first frame update
     void Start()
     {
         rigidbody = GetComponent<Rigidbody2D>();
+        animatorController = GetComponent<Animator>();
     }
 
     // Update is called once per frame
@@ -29,12 +36,11 @@ public class PlayerBehaviour : MonoBehaviour
 
     private void Move()
     {
+        float x = Input.GetAxisRaw("Horizontal");
+
         if (isGrounded)
         {
-            //float deltaTime = Time.deltaTime;
-
             // Keyboard Input
-            float x = Input.GetAxisRaw("Horizontal");
             float y = Input.GetAxisRaw("Vertical");
             float jump = Input.GetAxisRaw("Jump");
 
@@ -43,7 +49,14 @@ public class PlayerBehaviour : MonoBehaviour
             if (x != 0)
             {
                 x = FlipAnimation(x);
-            } 
+                animatorController.SetInteger("AnimationState", (int) PlayerAnimationState.RUN); // RUN State
+                state = PlayerAnimationState.RUN;
+            }
+            else
+            {
+                animatorController.SetInteger("AnimationState", (int)PlayerAnimationState.IDLE); // IDLE State
+                state = PlayerAnimationState.IDLE;
+            }
             
             // Touch Input
             Vector2 worldTouch = new Vector2();
@@ -52,14 +65,29 @@ public class PlayerBehaviour : MonoBehaviour
                 worldTouch = Camera.main.ScreenToWorldPoint(touch.position);
             }
 
-            float horizontalMoveForce = x * horizontalForce;// * deltaTime;
-            float jumpMoveForce = jump * verticalForce; // * deltaTime;
+            float horizontalMoveForce = x * horizontalForce;
+            float jumpMoveForce = jump * verticalForce; 
 
             float mass = rigidbody.mass * rigidbody.gravityScale;
 
 
             rigidbody.AddForce(new Vector2(horizontalMoveForce, jumpMoveForce) * mass);
             rigidbody.velocity *= 0.99f; // scaling / stopping hack
+        }
+        else // Air Control
+        {
+            animatorController.SetInteger("AnimationState", (int)PlayerAnimationState.JUMP); // JUMP State
+            state = PlayerAnimationState.JUMP;
+
+            if (x != 0)
+            {
+                x = FlipAnimation(x);
+
+                float horizontalMoveForce = x * horizontalForce * airControlFactor;
+                float mass = rigidbody.mass * rigidbody.gravityScale;
+
+                rigidbody.AddForce(new Vector2(horizontalMoveForce, 0.0f) * mass);
+            }
         }
 
     }
