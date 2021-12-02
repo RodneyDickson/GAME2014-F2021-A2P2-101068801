@@ -18,6 +18,14 @@ public class EnemyController : MonoBehaviour
     [Header("Animation")] 
     public Animator animatorController;
 
+    [Header("Bullet Firing")]
+    public Transform bulletSpawn;
+    public float fireDelay;
+    public GameObject player;
+    public GameObject bulletPrefab;
+    public AudioSource spitSound;
+
+
     private Rigidbody2D rigidbody;
 
     // Start is called before the first frame update
@@ -26,6 +34,8 @@ public class EnemyController : MonoBehaviour
         rigidbody = GetComponent<Rigidbody2D>();
         enemyLOS = GetComponent<LOS>();
         animatorController = GetComponent<Animator>();
+        player = GameObject.FindObjectOfType<PlayerBehaviour>().gameObject;
+        spitSound = GetComponent<AudioSource>();
     }
 
     // Update is called once per frame
@@ -43,6 +53,7 @@ public class EnemyController : MonoBehaviour
         else
         {
             animatorController.enabled = false;
+            FireBullet();
         }
         
     }
@@ -111,6 +122,16 @@ public class EnemyController : MonoBehaviour
     private void Flip()
     {
         transform.localScale = new Vector3(transform.localScale.x * -1.0f, transform.localScale.y, transform.localScale.z);
+    }
+
+    private void FireBullet()
+    {
+        if (Time.frameCount % fireDelay == 0)
+        {
+            var temp_bullet = Instantiate(bulletPrefab, bulletSpawn.position, Quaternion.identity);
+            temp_bullet.GetComponent<BulletController>().direction = Vector3.Normalize(player.transform.position - bulletSpawn.position);
+            spitSound.Play();
+        }
     }
 
     // EVENTS

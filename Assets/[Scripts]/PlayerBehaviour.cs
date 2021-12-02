@@ -23,8 +23,10 @@ public class PlayerBehaviour : MonoBehaviour
     [Header("Animation")] 
     public PlayerAnimationState state;
 
-    [Header("Sound FX")] 
+    [Header("Sound FX")]
+    //public List<AudioSource> audioSources;
     public AudioSource jumpSound;
+    public AudioSource hitSound;
 
     [Header("Dust Trail")]
     public ParticleSystem dustTrail;
@@ -49,7 +51,11 @@ public class PlayerBehaviour : MonoBehaviour
 
         rigidbody = GetComponent<Rigidbody2D>();
         animatorController = GetComponent<Animator>();
+
+        // Assign sounds
+        //audioSources = GetComponents<AudioSource>().ToList();
         jumpSound = GetComponent<AudioSource>();
+        hitSound = GetComponent<AudioSource>();
 
         dustTrail = GetComponentInChildren<ParticleSystem>();
 
@@ -89,7 +95,6 @@ public class PlayerBehaviour : MonoBehaviour
             if (jump > 0)
             {
                 jumpSound.Play();
-                ShakeCamera();
             }
 
             // Check for Flip
@@ -151,6 +156,20 @@ public class PlayerBehaviour : MonoBehaviour
         return x;
     }
 
+
+    private void CreateDustTrail()
+    {
+        dustTrail.GetComponent<Renderer>().material.SetColor("_Color", dustTrailColor);
+        dustTrail.Play();
+    }
+
+    private void ShakeCamera()
+    {
+        perlin.m_AmplitudeGain = shakeIntensity;
+        isCameraShaking = true;
+    }
+
+
     // EVENTS
 
     private void OnCollisionEnter2D(Collision2D other)
@@ -169,18 +188,14 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
-    private void CreateDustTrail()
+    private void OnTriggerEnter2D(Collider2D other)
     {
-        dustTrail.GetComponent<Renderer>().material.SetColor("_Color", dustTrailColor);
-        dustTrail.Play();
+        if (other.gameObject.CompareTag("Bullet"))
+        {
+            hitSound.Play();
+            ShakeCamera();
+        }
     }
-
-    private void ShakeCamera()
-    {
-        perlin.m_AmplitudeGain = shakeIntensity;
-        isCameraShaking = true;
-    }
-
 
     // UTILITIES
 
