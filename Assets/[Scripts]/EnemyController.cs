@@ -68,6 +68,7 @@ public class EnemyController : MonoBehaviour
                         
                         if((hit) && (hit.collider.gameObject.CompareTag("Player")))
                         {
+                            Debug.DrawLine(lookInFrontPoint.position, collider.transform.position, Color.red);
                             return true;
                         }
                     }
@@ -137,6 +138,7 @@ public class EnemyController : MonoBehaviour
     {
         Gizmos.color = Color.green;
         Gizmos.DrawLine(transform.position, lookAheadPoint.position);
+        Gizmos.color = Color.yellow;
         Gizmos.DrawLine(transform.position, lookInFrontPoint.position);
     }
 }
