@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Cinemachine;
+using UnityEngine.SceneManagement;
 
 public class PlayerBehaviour : MonoBehaviour
 {
@@ -19,6 +21,11 @@ public class PlayerBehaviour : MonoBehaviour
     public LayerMask groundLayerMask;
     [Range(0.1f, 0.9f)]
     public float airControlFactor;
+
+    [Header("Stats")]
+    public int currentHealth = 0;
+    public int maxHealth = 3;
+    public Text playerHealthText;
 
     [Header("Animation")] 
     public PlayerAnimationState state;
@@ -60,6 +67,8 @@ public class PlayerBehaviour : MonoBehaviour
         dustTrail = GetComponentInChildren<ParticleSystem>();
 
         perlin = virtualCamera.GetCinemachineComponent<CinemachineBasicMultiChannelPerlin>();
+
+        currentHealth = maxHealth;
     }
 
     // Update is called once per frame
@@ -169,6 +178,15 @@ public class PlayerBehaviour : MonoBehaviour
         isCameraShaking = true;
     }
 
+    public void DamagePlayer(int damage)
+    {
+        currentHealth -= damage;
+        if (currentHealth <= 0)
+        {
+            SceneManager.LoadScene("DeathScene");
+        }
+    }
+
 
     // EVENTS
 
@@ -194,6 +212,7 @@ public class PlayerBehaviour : MonoBehaviour
         {
             hitSound.Play();
             ShakeCamera();
+            DamagePlayer(1);
         }
     }
 

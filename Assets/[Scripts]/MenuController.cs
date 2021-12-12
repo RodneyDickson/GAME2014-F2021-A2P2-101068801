@@ -10,4 +10,14 @@ public class MenuController : MonoBehaviour
     {
         SceneManager.LoadScene("Main");
     }
+
+    public void OnBackButton_Pressed()
+    {
+        SceneManager.LoadScene("Start");
+    }
+
+    public void OnInstructionsButton_Pressed()
+    {
+        SceneManager.LoadScene("Instructions");
+    }
 }

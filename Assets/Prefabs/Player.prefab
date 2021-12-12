@@ -5199,10 +5199,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 64
   airControlFactor: 0.5
+  playerHealth: 3
   state: 0
-  audioSources:
-  - {fileID: 0}
-  - {fileID: 0}
   jumpSound: {fileID: 0}
   hitSound: {fileID: 0}
   dustTrail: {fileID: 0}

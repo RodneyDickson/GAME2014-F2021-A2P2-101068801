@@ -421,7 +421,7 @@ MonoBehaviour:
   isGroundAhead: 0
   animatorController: {fileID: 0}
   bulletSpawn: {fileID: 7251463608478452456}
-  fireDelay: 20
+  fireDelay: 35
   player: {fileID: 0}
   bulletPrefab: {fileID: 7014774162125000209, guid: 621bae4cf546c66438764055a2e9fd6b, type: 3}
   spitSound: {fileID: 0}
